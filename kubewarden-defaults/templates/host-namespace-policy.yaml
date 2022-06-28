@@ -1,0 +1,22 @@
+{{ if .Values.recommendedPolicies.enabled }}
+apiVersion: {{ $.Values.crdVersion }}
+kind: ClusterAdmissionPolicy
+metadata:
+  name: {{ $.Values.recommendedPolicies.hostNamespacePolicy.name }}
+spec:
+  mode: {{ $.Values.recommendedPolicies.defaultPolicyMode }}
+  module: {{ $.Values.recommendedPolicies.hostNamespacePolicy.module }}
+{{ include "policy-namespace-selector" . | indent 2}}
+  rules:
+  - apiGroups: [""]
+    apiVersions: ["v1"]
+    resources: ["pods"]
+    operations:
+    - CREATE
+    - UPDATE
+  mutating: false
+  settings:
+    allow_host_ipc: false
+    allow_host_network: false
+    allow_host_pid: false
+{{ end }}

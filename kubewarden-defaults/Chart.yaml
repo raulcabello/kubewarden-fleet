@@ -1,0 +1,18 @@
+apiVersion: v2
+name: kubewarden-defaults
+description: A Helm chart for deploying Kubewarden's default PolicyServer instance
+icon: https://www.kubewarden.io/images/icon-kubewarden.svg
+type: application
+home: https://www.kubewarden.io/
+maintainers:
+- name: José Guilherme Vanz
+  email: jguilhermevanz@suse.com
+
+# This is the chart version. This version number should be incremented each time you make changes
+# to the chart and its templates, including the app version.
+# Versions are expected to follow Semantic Versioning (https://semver.org/)
+version: 1.0.1
+dependencies:
+  - name: kubewarden-crds
+    version: "v1.0.0"
+    repository: "https://charts.kubewarden.io"

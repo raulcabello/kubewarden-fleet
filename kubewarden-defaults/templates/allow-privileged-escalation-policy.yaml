@@ -1,0 +1,20 @@
+{{ if .Values.recommendedPolicies.enabled }}
+apiVersion: {{ $.Values.crdVersion }}
+kind: ClusterAdmissionPolicy
+metadata:
+  name: {{ $.Values.recommendedPolicies.allowPrivilegeEscalationPolicy.name }}
+spec:
+  mode: {{ $.Values.recommendedPolicies.defaultPolicyMode }}
+  module: {{ $.Values.recommendedPolicies.allowPrivilegeEscalationPolicy.module }}
+{{ include "policy-namespace-selector" . | indent 2}}
+  rules:
+  - apiGroups: [""]
+    apiVersions: ["v1"]
+    resources: ["pods"]
+    operations:
+    - CREATE
+    - UPDATE
+  mutating: true
+  settings:
+    default_allow_privilege_escalation: false
+{{ end }}

@@ -1,0 +1,55 @@
+{{- if .Values.common.policyServer.default.enabled }}
+apiVersion: {{ $.Values.crdVersion }}
+kind: PolicyServer
+metadata:
+  name: {{ .Values.common.policyServer.default.name }}
+  finalizers:
+    - kubewarden
+spec:
+  image: {{ .Values.policyServer.image.repository }}:{{ .Values.policyServer.image.tag }}
+  serviceAccountName: {{ .Values.policyServer.serviceAccountName }}
+  replicas: {{ .Values.policyServer.replicaCount | default 1 }}
+  {{- if .Values.policyServer.verificationConfig }}
+  verificationConfig: {{ .Values.policyServer.verificationConfig }}
+  {{- end }}
+  annotations:
+    {{- if .Values.policyServer.telemetry.enabled }}
+      "sidecar.opentelemetry.io/inject": "true"
+    {{- end }}
+    {{- range $key, $value := .Values.policyServer.annotations }}
+      {{ $key | quote }}: {{ $value | quote }}
+    {{- end }}
+  {{- if or .Values.policyServer.env .Values.policyServer.telemetry.enabled }}
+  env:
+    {{- if .Values.policyServer.telemetry.enabled }}
+    - name: KUBEWARDEN_ENABLE_METRICS
+      value: "1"
+    - name: KUBEWARDEN_LOG_FMT
+      value: otlp
+    {{- end }}
+    {{- range .Values.policyServer.env }}
+    - name: {{ .name | quote }}
+      value: {{ .value | quote }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+  {{- if .Values.policyServer.imagePullSecret }}
+  imagePullSecret: {{ .Values.policyServer.imagePullSecret | quote }}
+  {{- end }}
+  {{- if .Values.policyServer.insecureSources }}
+  insecureSources:
+  {{- range $source := .Values.policyServer.insecureSources }}
+    - {{ $source | quote }}
+  {{- end }}
+  {{- end }}
+  {{- if .Values.policyServer.sourceAuthorities }}
+  sourceAuthorities:
+  {{- range .Values.policyServer.sourceAuthorities }}
+  {{- if .certs }}
+    {{ .uri }}:
+  {{- range .certs }}
+      - {{ . | quote }}
+  {{- end }}
+  {{- end }}
+  {{- end }}
+  {{- end }}

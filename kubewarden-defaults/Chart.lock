@@ -1,0 +1,6 @@
+dependencies:
+- name: kubewarden-crds
+  repository: https://charts.kubewarden.io
+  version: 1.0.0
+digest: sha256:582f1717ac4dff73011291cae1800edb35e0888e09ce2be6d78b723e5aaffaf5
+generated: "2022-06-28T16:13:35.690981994+02:00"
